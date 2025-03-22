@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     "users",
     "materials",
 ]
+INSTALLED_APPS += ["rest_framework_simplejwt"]
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
