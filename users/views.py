@@ -1,5 +1,8 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, filters
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 from .models import User, Payment
 from .serializers import UserSerializer, PaymentSerializer, UserDetailSerializer
 
@@ -8,7 +11,10 @@ class UserViewSet(viewsets.ModelViewSet):
     """Класс для представления пользователей в API."""
 
     queryset = User.objects.all()
-    # serializer_class = UserSerializer
+
+    # Аутентификация и разрешения
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [IsAuthenticated]  # Доступ только для авторизованных пользователей
 
     def get_serializer_class(self):
         if self.action == "retrieve":
