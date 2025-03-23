@@ -32,13 +32,11 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # Third-party apps
-    "rest_framework",
-    # Local apps
-    "users",
-    "materials",
 ]
-INSTALLED_APPS += ["rest_framework_simplejwt"]
+# Third-party apps
+INSTALLED_APPS += ["rest_framework", "rest_framework_simplejwt"]
+# Local apps
+INSTALLED_APPS += ["users", "materials"]
 
 
 MIDDLEWARE = [
