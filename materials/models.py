@@ -32,7 +32,7 @@ class Lesson(models.Model):
 
     def __str__(self):
         """Метод для отображения объекта урока в админке."""
-        return self.name + " - " + self.course.name
+        return f"{self.name} - {self.course.name}"
 
     class Meta:
         """Мета-класс для отображения имени модели в админке."""
