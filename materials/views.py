@@ -24,7 +24,7 @@ class CourseViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         """Настраиваем права доступа для курсов"""
-        if self.action in ["list", "retrieve", "update", "partial_update"]:
+        if self.action not in ["create", "destroy"]:
             self.permission_classes = [IsAuthenticated, IsModerator]
         else:
             self.permission_classes = [DenyAll]
