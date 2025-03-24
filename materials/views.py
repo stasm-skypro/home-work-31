@@ -22,7 +22,7 @@ class CourseViewSet(viewsets.ModelViewSet):
         return CourseSerializer
 
     def get_permissions(self):
-        """Настраиваем права доступа для владельцев и модераторов"""
+        """Настраиваем права доступа для владельцев и модераторов."""
 
         if self.action in ["create", "destroy"]:
             self.permission_classes = [
@@ -82,7 +82,7 @@ class LessonCreateAPIView(generics.CreateAPIView):
     serializer_class = LessonSerializer
 
     def get_permissions(self):
-        """Настраиваем права доступа для владельцев и модераторов"""
+        """Настраиваем права доступа для владельцев и модераторов."""
 
         if self.action in ["create", "destroy"]:
             self.permission_classes = [
@@ -117,7 +117,7 @@ class LessonListAPIView(generics.ListAPIView):
     serializer_class = LessonSerializer
 
     def get_permissions(self):
-        """Настраиваем права доступа для владельцев и модераторов"""
+        """Настраиваем права доступа для владельцев и модераторов."""
 
         if self.action in ["create", "destroy"]:
             self.permission_classes = [
@@ -144,7 +144,7 @@ class LessonRetrieveAPIView(generics.RetrieveAPIView):
     serializer_class = LessonSerializer
 
     def get_permissions(self):
-        """Настраиваем права доступа для владельцев и модераторов"""
+        """Настраиваем права доступа для владельцев и модераторов."""
 
         if self.action in ["create", "destroy"]:
             self.permission_classes = [
@@ -172,7 +172,7 @@ class LessonUpdateAPIView(generics.UpdateAPIView):
     serializer_class = LessonSerializer
 
     def get_permissions(self):
-        """Настраиваем права доступа для владельцев и модераторов"""
+        """Настраиваем права доступа для владельцев и модераторов."""
 
         if self.action in ["create", "destroy"]:
             self.permission_classes = [
@@ -202,7 +202,7 @@ class LessonDestroyAPIView(generics.DestroyAPIView):
     serializer_class = LessonSerializer
 
     def get_permissions(self):
-        """Настраиваем права доступа для владельцев и модераторов"""
+        """Настраиваем права доступа для владельцев и модераторов."""
 
         if self.action in ["create", "destroy"]:
             self.permission_classes = [

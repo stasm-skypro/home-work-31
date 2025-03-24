@@ -1,9 +1,10 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, filters
-from rest_framework.permissions import IsAuthenticated,  AllowAny
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from .models import User, Payment
+from .permissions import IsProfileOwner
 from .serializers import (
     UserSerializer,
     PaymentSerializer,
@@ -11,10 +12,11 @@ from .serializers import (
     RegisterSerializer,
 )
 
-import  logging
+import logging
 
 
 logger = logging.getLogger(__name__)
+
 
 class UserViewSet(viewsets.ModelViewSet):
     """CRUD для пользователей (только авторизованные)."""
@@ -23,20 +25,34 @@ class UserViewSet(viewsets.ModelViewSet):
 
     # Аутентификация и разрешения
     authentication_classes = [JWTAuthentication]
-    # permission_classes = [IsAuthenticated]  # Доступ только для авторизованных пользователей
 
     def get_serializer_class(self):
-        if self.action == "retrieve":
-            return UserDetailSerializer
+        if self.action in ["retrieve", "update", "partial_update"]:
+            if self.request.user == self.get_object():
+                return UserDetailSerializer  # Полный доступ для владельца
         elif self.action == "create":
             return RegisterSerializer
-        return UserSerializer
+        return (
+            UserSerializer  # Ограниченный доступ для чужого профиля и списка профилей
+        )
+
+    def get_permissions(self):
+        """Ограничиваем редактирование только владельцам"""
+        if self.action in ["update", "partial_update", "destroy"]:
+            self.permission_classes = [IsAuthenticated, IsProfileOwner]
+        return [permission() for permission in self.permission_classes]
+
+    def perform_create(self, serializer):
+        serializer.save()
 
     def create(self, request, *args, **kwargs):
         """Переопределение метода create для регистрации пользователей. В метод добавлены разрешения и логгер."""
         self.permission_classes = [AllowAny]
         response = super().create(request, *args, **kwargs)
-        logger.info("Пользователь с именем %s и email %s успешно создан." % (request.data["username"], request.data["email"]))
+        logger.info(
+            "Пользователь с именем %s и email %s успешно создан."
+            % (request.data["username"], request.data["email"])
+        )
         return response
 
     def list(self, request, *args, **kwargs):
@@ -50,14 +66,18 @@ class UserViewSet(viewsets.ModelViewSet):
         """Переопределение метода retrieve для вывода информации о пользователе. В метод добавлены разрешения и логгер."""
         self.permission_classes = [IsAuthenticated]
         response = super().retrieve(request, *args, **kwargs)
-        logger.info("Информация о пользователе с id %s успешно получена." % kwargs["pk"])
+        logger.info(
+            "Информация о пользователе с id %s успешно получена." % kwargs["pk"]
+        )
         return response
 
     def update(self, request, *args, **kwargs):
         """Переопределение метода update для редактирования информации о пользователе. В метод добавлены разрешения и логгер."""
         self.permission_classes = [IsAuthenticated]
         response = super().update(request, *args, **kwargs)
-        logger.info("Информация о пользователе с id %s успешно обновлена." % kwargs["pk"])
+        logger.info(
+            "Информация о пользователе с id %s успешно обновлена." % kwargs["pk"]
+        )
         return response
 
     def destroy(self, request, *args, **kwargs):

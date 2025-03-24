@@ -11,14 +11,16 @@ class PaymentSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    """Сериализатор для списка пользователей"""
+    """Сериализатор для списка пользователей."""
 
     payments = PaymentSerializer(many=True, read_only=True).data
 
     class Meta:
         model = User
         fields = [
-            "id", "username", "email", "first_name", "last_name", "phone", "city", "payments",
+            "id",
+            "username",
+            "email",
         ]
 
 
@@ -30,8 +32,19 @@ class UserDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
-            "id", "username", "email", "first_name", "last_name", "phone", "city",  "is_staff", "is_active", "date_joined", "payments"
+            "id",
+            "username",
+            "email",
+            "first_name",
+            "last_name",
+            "phone",
+            "city",
+            "is_staff",
+            "is_active",
+            "date_joined",
+            "payments",
         ]
+        extra_kwargs = {"password": {"write_only": True}}
 
 
 class RegisterSerializer(serializers.ModelSerializer):
@@ -49,7 +62,7 @@ class RegisterSerializer(serializers.ModelSerializer):
             username=validated_data["username"],
             email=validated_data["email"],
             password=validated_data["password"],
-            first_name = validated_data["first_name"],
-            last_name = validated_data["last_name"],
+            first_name=validated_data["first_name"],
+            last_name=validated_data["last_name"],
         )
         return user
