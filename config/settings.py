@@ -185,8 +185,7 @@ REST_FRAMEWORK = {
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ],
     'DEFAULT_PERMISSION_CLASSES': (  # Настройка прав доступа для всех контроллеров
-        'rest_framework.permissions.AllowAny',  # Разрешить доступ всем пользователям по умолчанию, иные права доступа
-        # определяем в контроллерах
+        'rest_framework.permissions.IsAuthenticated',
     ),
 }
 

@@ -1,4 +1,8 @@
+# View for materials app
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import viewsets, generics
+
+from users.permissions import IsModerator, DenyAll
 from .models import Course, Lesson
 from .serializers import CourseSerializer, LessonSerializer, CourseDetailSerializer
 import logging
@@ -17,6 +21,17 @@ class CourseViewSet(viewsets.ModelViewSet):
         if self.action == "retrieve":
             return CourseDetailSerializer
         return CourseSerializer
+
+    def get_permissions(self):
+        """Настраиваем права доступа для курсов"""
+        if self.action in ["list", "retrieve", "update", "partial_update"]:
+            self.permission_classes = [IsAuthenticated, IsModerator]
+        else:
+            self.permission_classes = [DenyAll]
+
+        perm = [permission() for permission in self.permission_classes]
+        print("Current permission", perm)
+        return perm
 
 
     def create(self, request, *args, **kwargs):
@@ -55,6 +70,14 @@ class LessonCreateAPIView(generics.CreateAPIView):
 
     serializer_class = LessonSerializer
 
+    def get_permissions(self):
+        """Настраиваем права доступа для курсов"""
+        if self.action in ["update", "partial_update"]:
+            self.permission_classes = [IsAuthenticated, IsModerator]
+        else:
+            self.permission_classes = [AllowAny]
+        return [permission() for permission in self.permission_classes]
+
     def create(self, request, *args, **kwargs):
         """Переопределение метода для создания урока."""
         response = super().create(request, *args, **kwargs)
@@ -68,6 +91,14 @@ class LessonListAPIView(generics.ListAPIView):
     queryset = Lesson.objects.all().order_by("name")
     serializer_class = LessonSerializer
 
+    def get_permissions(self):
+        """Настраиваем права доступа для курсов"""
+        if self.action in ["update", "partial_update"]:
+            self.permission_classes = [IsAuthenticated, IsModerator]
+        else:
+            self.permission_classes = [AllowAny]
+        return [permission() for permission in self.permission_classes]
+
     def list(self, request, *args, **kwargs):
         """Переопределение метода для получения списка уроков."""
         logger.info("Запрос на получение списка уроков от %s", request.user)
@@ -79,6 +110,14 @@ class LessonRetrieveAPIView(generics.RetrieveAPIView):
 
     queryset = Lesson.objects.all().order_by("name")
     serializer_class = LessonSerializer
+
+    def get_permissions(self):
+        """Настраиваем права доступа для курсов"""
+        if self.action in ["update", "partial_update"]:
+            self.permission_classes = [IsAuthenticated, IsModerator]
+        else:
+            self.permission_classes = [AllowAny]
+        return [permission() for permission in self.permission_classes]
 
     def retrieve(self, request, *args, **kwargs):
         """Переопределение метода для получения одного курса."""
@@ -93,6 +132,14 @@ class LessonUpdateAPIView(generics.UpdateAPIView):
     queryset = Lesson.objects.all().order_by("name")
     serializer_class = LessonSerializer
 
+    def get_permissions(self):
+        """Настраиваем права доступа для курсов"""
+        if self.action in ["update", "partial_update"]:
+            self.permission_classes = [IsAuthenticated, IsModerator]
+        else:
+            self.permission_classes = [AllowAny]
+        return [permission() for permission in self.permission_classes]
+
     def update(self, request, *args, **kwargs):
         """Переопределение метода для обновления урока."""
         response = super().update(request, *args, **kwargs)
@@ -105,6 +152,14 @@ class LessonDestroyAPIView(generics.DestroyAPIView):
 
     queryset = Lesson.objects.all().order_by("name")
     serializer_class = LessonSerializer
+
+    def get_permissions(self):
+        """Настраиваем права доступа для курсов"""
+        if self.action in ["update", "partial_update"]:
+            self.permission_classes = [IsAuthenticated, IsModerator]
+        else:
+            self.permission_classes = [AllowAny]
+        return [permission() for permission in self.permission_classes]
 
     def destroy(self, request, *args, **kwargs):
         """Переопределение метода для удаления урока."""

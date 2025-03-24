@@ -1,12 +1,16 @@
 from rest_framework.permissions import BasePermission
 
-class IsModeratorOrReadOnly(BasePermission):
-    """Разрешение для модераторов (только просмотр и изменение)."""
+class IsModerator(BasePermission):
+    """Проверяет зарегистрирован ли пользователь и входит ли он в группу 'Модераторы'"""
 
     def has_permission(self, request, view):
-        return request.user.is_authenticated
+        return (
+            request.user.is_authenticated
+            and request.user.groups.filter(name="Модераторы").exists()
+        )
 
-    def has_object_permission(self, request, view, obj):
-        if request.method in ["GET", "HEAD", "OPTIONS"]:  # Разрешаем просмотр всем
-            return True
-        return request.user.groups.filter(name="Модераторы").exists() and request.method in ["PUT", "PATCH"]
+
+class DenyAll(BasePermission):
+    """Полностью запрещает доступ"""
+    def has_permission(self, request, view):
+        return False
