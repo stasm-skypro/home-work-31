@@ -3,6 +3,7 @@ Django settings for config project.
 """
 
 import os
+from datetime import timedelta
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -20,7 +21,7 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", False) == "True"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -31,12 +32,12 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    # Third-party apps
-    "rest_framework",
-    # Local apps
-    "users",
-    "materials",
 ]
+# Third-party apps
+INSTALLED_APPS += ["rest_framework", "rest_framework_simplejwt"]
+# Local apps
+INSTALLED_APPS += ["users", "materials"]
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -175,9 +176,23 @@ LOGGING = {
 
 # Настройка DjangoFilterBackend
 REST_FRAMEWORK = {
-    'DEFAULT_FILTER_BACKENDS': [
+    'DEFAULT_FILTER_BACKENDS': [  # Настройка фильтрации данных
         'django_filters.rest_framework.DjangoFilterBackend',
         'rest_framework.filters.SearchFilter',
         'rest_framework.filters.OrderingFilter',
-    ]
+    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": [  # Настройка аутентификации
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ],
+    'DEFAULT_PERMISSION_CLASSES': (  # Настройка прав доступа для всех контроллеров
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+}
+
+
+# Настройка Simple JWT
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),  # Настройка времени жизни токена доступа
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),  # Настройка времени жизни токена обновления
+    "AUTH_HEADER_TYPES": ("Bearer",),  # Настройка типа заголовка для токена
 }
